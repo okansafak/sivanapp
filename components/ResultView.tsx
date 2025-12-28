@@ -1,15 +1,16 @@
 import React from 'react';
-import { AIExamResult, Exam } from '../types';
+import { AIExamResult, Exam, StudentAnswers } from '../types';
 import { CheckCircle, XCircle, Home, Printer } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 interface ResultViewProps {
   result: AIExamResult;
   exam: Exam;
+  answers: StudentAnswers;
   onHome: () => void;
 }
 
-const ResultView: React.FC<ResultViewProps> = ({ result, exam, onHome }) => {
+const ResultView: React.FC<ResultViewProps> = ({ result, exam, answers, onHome }) => {
   
   // Prepare data for chart
   const chartData = result.corrections.map((c, index) => ({
@@ -91,6 +92,8 @@ const ResultView: React.FC<ResultViewProps> = ({ result, exam, onHome }) => {
             <h3 className="text-lg md:text-xl font-bold border-b pb-2">Detaylı Değerlendirme</h3>
             {result.corrections.map((corr, idx) => {
               const question = exam.questions.find(q => q.id === corr.questionId);
+              const studentAnswer = answers[corr.questionId] || "(Boş Bırakıldı)";
+              
               return (
                 <div key={idx} className={`p-3 md:p-4 rounded-lg border ${corr.isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} print:bg-white print:border-gray-300`}>
                   <div className="flex justify-between items-start mb-2">
@@ -108,8 +111,16 @@ const ResultView: React.FC<ResultViewProps> = ({ result, exam, onHome }) => {
                   
                   {question && <p className="text-xs md:text-sm text-gray-500 mb-2 font-medium">{question.title}</p>}
                   
+                  {/* Student Answer Section */}
+                  <div className="mb-3 bg-white/60 p-2 rounded border border-gray-200">
+                    <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Senin Cevabın:</span>
+                    <p className="text-sm md:text-base text-gray-800 italic font-medium break-words">
+                      {studentAnswer}
+                    </p>
+                  </div>
+
                   <div className="mt-2">
-                    <span className="font-bold text-xs md:text-sm text-gray-700 block mb-1">Düzeltme & Yorum:</span>
+                    <span className="font-bold text-xs md:text-sm text-gray-700 block mb-1">Öğretmen Değerlendirmesi:</span>
                     <p className="text-gray-800 text-sm md:text-base">{corr.feedback}</p>
                   </div>
                 </div>

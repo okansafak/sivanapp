@@ -188,6 +188,7 @@ const App: React.FC = () => {
         <ResultView 
           result={aiResult} 
           exam={currentExam} 
+          answers={answers}
           onHome={handleGoHome} 
         />
       )}
