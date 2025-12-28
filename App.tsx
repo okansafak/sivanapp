@@ -4,9 +4,10 @@ import ExamPaper from './components/ExamPaper';
 import ResultView from './components/ResultView';
 import ConfirmationModal from './components/ConfirmationModal';
 import ApiKeyModal from './components/ApiKeyModal';
-import { EXAMS } from './data/exams';
+import { ALL_EXAMS } from './data/exams/index'; // Updated import
 import { evaluateExam } from './services/geminiService';
 import { Exam, StudentAnswers, AIExamResult } from './types';
+import { Analytics } from "@vercel/analytics/next";
 
 type ViewState = 'home' | 'exam' | 'result';
 
@@ -25,7 +26,8 @@ const App: React.FC = () => {
   
   const [modalConfig, setModalConfig] = useState({ title: '', message: '', type: 'info' as 'info' | 'warning' });
 
-  const currentExam = EXAMS.find(e => e.id === selectedExamId);
+  // Use ALL_EXAMS instead of old EXAMS
+  const currentExam = ALL_EXAMS.find(e => e.id === selectedExamId);
 
   // Load API key from local storage on mount
   useEffect(() => {
@@ -192,6 +194,8 @@ const App: React.FC = () => {
           onHome={handleGoHome} 
         />
       )}
+
+      <Analytics />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
-import { Exam, StudentAnswers, AIExamResult } from '../types';
+import { Exam, StudentAnswers, AIExamResult, LESSON_LABELS } from '../types';
 
 export const evaluateExam = async (exam: Exam, answers: StudentAnswers, userApiKey: string): Promise<AIExamResult> => {
   const apiKey = userApiKey || process.env.API_KEY || ''; 
@@ -14,36 +14,29 @@ export const evaluateExam = async (exam: Exam, answers: StudentAnswers, userApiK
     SORU ID: ${q.id}
     KAZANIM KODU: ${q.code}
     KONU: ${q.title}
-    BAĞLAM (Metin/Şiir): ${q.context || "Yok"}
+    BAĞLAM (Metin/Şiir/Görsel Açıklaması): ${q.context || "Yok"}
     SORU: ${q.questionText}
     ÖĞRENCİ CEVABI: ${answers[q.id] || "BOŞ BIRAKILDI"}
   `).join("\n---\n");
 
-  // Senaryo 1 Kazanım Kuralları
-  const rubric = `
-    DEĞERLENDİRME KRİTERLERİ (5. SINIF TÜRKÇE SENARYO 1):
-    - T.O.5.18 (Şiir Biçimi): Dize ve kıta sayıları doğru tespit edilmiş mi?
-    - T.O.5.20 (Söz Sanatları): Benzetme veya kişileştirme doğru bulunmuş mu?
-    - T.O.5.14 (Hikaye Unsurları): Yer, zaman ve kahramanlar metinden doğru çıkarılmış mı?
-    - T.O.5.5 (Kelime Anlamı): Öğrencinin tahmini, kelimenin metindeki bağlamına uygun mu? (Sözlük anlamı birebir şart değil, mantıklı tahmin yeterli).
-    - T.O.5.8 (Çıkarım): Metne dayalı mantıklı bir neden-sonuç ilişkisi kurulmuş mu?
-    - T.O.5.19 (Düşünceyi Geliştirme): Tanımlama, Karşılaştırma, Örneklendirme veya Benzetme doğru tespit edilmiş mi?
-    - T.Y.5.20 (Geçiş İfadeleri): Cümlenin akışına uygun bağlaç (ama, oysa, çünkü vb.) kullanılmış mı?
-    - T.Y.5.21 (Yazım/Noktalama): Büyük harf kullanımı, tarihlerin yazımı, eklerin ayrılması düzeltilmiş mi?
-    - T.Y.5.7 (Yaratıcı Yazma): Giriş-Gelişme-Sonuç bütünlüğü var mı? Konuyla ilgili mi? Cümleler kurallı mı?
-  `;
+  const lessonName = LESSON_LABELS[exam.lesson];
 
   const systemPrompt = `
-    Sen uzman bir Türkçe öğretmenisin. 5. sınıf öğrencisinin sınav kağıdını değerlendiriyorsun.
-    
-    ${rubric}
+    Sen uzman bir ${lessonName} öğretmenisin. 5. sınıf öğrencisinin sınav kağıdını değerlendiriyorsun.
+    Sınav Konusu: ${exam.title} - ${exam.theme}
 
-    Genel Kurallar:
-    1. Öğrenciye hitap dilin (Sen dili) teşvik edici, nazik ve eğitici olmalı.
-    2. Yanlış cevaplarda doğrusunu açıklayarak öğret.
-    3. Puanlamada adil ol. Boş cevaplara 0 ver. Kısmi doğrulara kısmi puan ver.
-    4. "score" alanı 0-100 arasında o sorunun başarı yüzdesidir.
+    Değerlendirme Kuralları:
+    1. ${lessonName} müfredatına (MEB) uygun değerlendirme yap.
+    2. Öğrenciye hitap dilin (Sen dili) teşvik edici, nazik ve eğitici olmalı.
+    3. Yanlış cevaplarda doğrusunu açıklayarak öğret.
+    4. Puanlamada adil ol. Boş cevaplara 0 ver.
+    5. "score" alanı 0-100 arasında o sorunun başarı yüzdesidir.
     
+    Özellikle Dikkat Et:
+    - Eğer ders Arapça ise: Harflerin doğru yazımı/okunuşu ve temel kelime bilgisine odaklan. Transkripsiyon (okunuş yazımı) doğruysa puan ver.
+    - Eğer ders Matematik ise: İşlem adımlarına ve sonuca bak. Mantık doğruysa işlem hatasına rağmen kısmi puan ver.
+    - Eğer ders Türkçe ise: Yazım kuralları, metin anlama ve söz sanatlarına dikkat et.
+
     Çıktı Formatı: JSON
   `;
 

@@ -1,3 +1,5 @@
+export type LessonType = 'turkish' | 'arabic' | 'math' | 'science' | 'social' | 'english' | 'religious';
+
 export interface Question {
   id: number;
   code: string; // e.g., T.O.5.18
@@ -10,8 +12,11 @@ export interface Question {
 
 export interface Exam {
   id: number;
-  title: string;
-  theme: string;
+  lesson: LessonType; // Ders
+  term: 1 | 2;        // Dönem
+  examNumber: 1 | 2;  // Yazılı Numarası
+  title: string;      // Sınav Başlığı (Örn: Sınav A)
+  theme: string;      // Alt Başlık (Örn: Doğa Teması)
   description: string;
   questions: Question[];
 }
@@ -33,3 +38,13 @@ export interface AIExamResult {
   generalFeedback: string;
   corrections: AICorrection[];
 }
+
+export const LESSON_LABELS: Record<LessonType, string> = {
+  turkish: 'Türkçe',
+  math: 'Matematik',
+  science: 'Fen Bilimleri',
+  social: 'Sosyal Bilgiler',
+  english: 'İngilizce',
+  religious: 'Din Kültürü',
+  arabic: 'Arapça'
+};
