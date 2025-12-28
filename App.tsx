@@ -7,6 +7,7 @@ import ApiKeyModal from './components/ApiKeyModal';
 import { EXAMS } from './data/exams';
 import { evaluateExam } from './services/geminiService';
 import { Exam, StudentAnswers, AIExamResult } from './types';
+import { Analytics } from "@vercel/analytics/react";
 
 type ViewState = 'home' | 'exam' | 'result';
 
@@ -192,6 +193,8 @@ const App: React.FC = () => {
           onHome={handleGoHome} 
         />
       )}
+
+      <Analytics />
     </div>
   );
 };
