@@ -230,5 +230,91 @@ export const EXAMS: Exam[] = [
       "Cümleyi düzeltiniz: 'Gazi mustafa kemal, 19 mayıs 1919'da samsun'a çıktı.'",
       "'Vatan Sevgisi' konulu, Milli Mücadele kahramanlarından birini (Şerife Bacı, Sütçü İmam vb.) konu alan bir hikaye yazınız."
     )
+  },
+  {
+    id: 7,
+    title: "SINAV G (TONGUÇ SERİSİ)",
+    theme: "Genel Değerlendirme",
+    description: "Tonguç Akademi kaynaklı, Senaryo 1 kazanımlarına uygun hazırlık sınavı.",
+    questions: [
+      {
+        id: 1,
+        code: "T.O.5.18",
+        title: "Şiirde Biçim Özellikleri",
+        context: "Yeşil örtü serilir dağlara,\nKuşlar neşe katar bağlara.\nNefes olur her ağaç bize,\nHayat verir tüm evrene.\n\nKorumalıyız her dalı,\nSevmeliyiz bu masalı.",
+        questionText: "Yukarıdaki şiiri biçim yönünden inceleyerek dize (mısra) ve kıta sayılarını yazınız.",
+        type: 'text',
+        placeholder: "Dize sayısı: ..., Kıta sayısı: ..."
+      },
+      {
+        id: 2,
+        code: "T.O.5.20",
+        title: "Söz Sanatları",
+        context: "Kitaplar hiç konuşmayan en sabırlı dostlardır. Kızmadan küsmeden beklerler bizi raflarda. Her sayfası bir hazine sandığı gibidir.",
+        questionText: "Bu dizelerde kitapların hangi özelliklerle 'kişileştirildiğini' ve nelere 'benzetildiğini' açıklayınız.",
+        type: 'text',
+        placeholder: "Kişileştirme: ..., Benzetme: ..."
+      },
+      {
+        id: 3,
+        code: "T.O.5.14",
+        title: "Hikaye Unsurları",
+        context: "Aslı okuldan çıktıktan sonra soluklanmak için parkta mola verdi. Parkta oynayan küçük bir çocuğun ağladığını görünce yanına gitti. Çocuğun dizinin kanadığını fark edince çantasından temiz bir bez çıkarıp yaranın üzerine koydu. Bu sırada çocuğun annesi telaşla geldi.",
+        questionText: "Bu metindeki hikâye unsurlarını (Yer, Zaman, Kahramanlar ve Olay) belirleyerek yazınız.",
+        type: 'text',
+        placeholder: "Yer: ..., Zaman: ..., Kişiler: ..., Olay: ..."
+      },
+      {
+        id: 4,
+        code: "T.O.5.5",
+        title: "Söz Varlığını Tahmin Etme",
+        context: "Rüzgâr yeryüzünün görünmez ama en çalışkan yolcusudur. Hiçbir yerde konaklamaz, sürekli bir yerden bir yere koşturur... Bazen de hiddetiyle denizlerde dev dalgalar oluşturur.",
+        questionText: "Metinde geçen 'konaklamak' ve 'hiddet' kelimelerinin anlamlarını metnin bağlamından hareketle tahmin ediniz.",
+        type: 'text',
+        placeholder: "Konaklamak tahminim: ..., Hiddet tahminim: ..."
+      },
+      {
+        id: 5,
+        code: "T.O.5.8",
+        title: "Çıkarım Yapma",
+        context: "Bilim insanları dünyayı değiştiren buluşları, doğru soruları sormaktan korkmadıkları için yapmışlardır. Unutmamak gerekir ki: Merak ilmin hocasıdır.",
+        questionText: "'Merak ilmin hocasıdır' sözüyle anlatılmak istenen derin anlamı (merakın bilgiye ulaşmadaki rolünü) kendi cümlelerinizle yorumlayınız.",
+        type: 'text',
+        placeholder: "Bu sözle anlatılmak istenen..."
+      },
+      {
+        id: 6,
+        code: "T.O.5.19",
+        title: "Düşünceyi Geliştirme Yolları",
+        context: "Belli kurallar çerçevesinde yapılan bedensel ve zihinsel gelişimi destekleyen hareketlerin tümüne spor denir. Okçuluk ve yüzme gibi sporlar bireysel kategoride yer alır. Takım sporlarında iş birliği daha önemliyken bireysel sporlarda kişisel performans öne çıkar.",
+        questionText: "Bu metinde kullanılan 'tanımlama', 'örneklendirme' ve 'karşılaştırma' yöntemlerine metinden birer örnek gösteriniz.",
+        type: 'text',
+        placeholder: "Tanımlama: ..., Örnek: ..., Karşılaştırma: ..."
+      },
+      {
+        id: 7,
+        code: "T.Y.5.20",
+        title: "Geçiş ve Bağlantı İfadeleri",
+        questionText: "Boşluklara (ama, fakat, çünkü, hatta) getiriniz:\n1. Ona çok güveniyordum .................... beni hayal kırıklığına uğrattı.\n2. Erken yatmayı düşünüyordum .................... sabah çok erken kalkmam gerekiyor.",
+        type: 'text',
+        placeholder: "1. ..., 2. ..."
+      },
+      {
+        id: 8,
+        code: "T.Y.5.21",
+        title: "Yazım ve Noktalama",
+        questionText: "Hataları düzeltiniz:\n1. Önümüzdeki mayıs ayında taşınıyoruz.\n2. Mimar Sinan, her yıl 9 nisan tarihinde anılır.\n3. Sümela'nın neden bu kadar yükseğe inşa edildiğini hiç düşündünüz mü ( )",
+        type: 'text',
+        placeholder: "Doğru halleri..."
+      },
+      {
+        id: 9,
+        code: "T.Y.5.7",
+        title: "Yaratıcı Yazma",
+        questionText: "'Paylaşmanın Önemi' veya 'Vatan Sevgisi' konularından birini seçerek; giriş, gelişme ve sonuç bölümlerine dikkat ettiğiniz kısa bir hikâye yazınız.",
+        type: 'textarea',
+        placeholder: "Hikayenizi buraya yazınız..."
+      }
+    ]
   }
 ];
