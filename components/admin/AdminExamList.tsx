@@ -214,7 +214,8 @@ const AdminExamList: React.FC<AdminExamListProps> = ({
         {visibleGrades.map((grade) => {
           const isExpanded = expandedGrades.includes(grade);
           const lessonsInGrade = groupedExams[grade];
-          const totalExamsInGrade = Object.values(lessonsInGrade).reduce((acc, curr) => acc + curr.length, 0);
+          // TIP HATASI DÜZELTİLDİ: acc: number ve curr: Exam[] olarak belirtildi
+          const totalExamsInGrade = Object.values(lessonsInGrade).reduce((acc: number, curr: Exam[]) => acc + curr.length, 0);
 
           return (
             <div key={grade} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">

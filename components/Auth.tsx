@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { User } from '../types';
 import { LogIn, School, GraduationCap, User as UserIcon, CheckCircle } from 'lucide-react';
 import { addLog } from '../services/logger';
+import { logSystemActivity } from '../services/supabaseService';
 
 interface AuthProps {
   onLogin: (user: User) => void;
@@ -26,7 +27,11 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
           role: 'admin'
         };
         localStorage.setItem('currentUser', JSON.stringify(adminUser));
+        
+        // Log to Local & Cloud
         addLog('LOGIN', 'Admin yetkisiyle giriş yapıldı.', adminUser.email);
+        logSystemActivity(adminUser.email, 'LOGIN', 'Admin girişi yapıldı.');
+        
         onLogin(adminUser);
         return;
     }
@@ -62,7 +67,10 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
 
     localStorage.setItem('currentUser', JSON.stringify(newUser));
     
+    // LOGGING (Local & Cloud)
     addLog('LOGIN', `${name} (${selectedGrade}. Sınıf) sisteme giriş yaptı.`, generatedEmail);
+    logSystemActivity(generatedEmail, 'LOGIN', `Yeni oturum: ${name}, ${selectedGrade}. Sınıf`);
+
     onLogin(newUser);
   };
 

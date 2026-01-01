@@ -11,7 +11,7 @@ import AdminDashboard from './components/AdminDashboard';
 import { ALL_EXAMS } from './data/exams/index'; 
 import { evaluateExam } from './services/geminiService';
 import { addLog } from './services/logger';
-import { Analytics } from '@vercel/analytics/react';
+import { logExamToSupabase, logSystemActivity } from './services/supabaseService';
 import { initializeDemoUsers } from './data/demoUsers';
 import { Exam, StudentAnswers, AIExamResult, User, ExamHistoryItem } from './types';
 import { Sparkles, Brain, Loader2 } from 'lucide-react';
@@ -97,6 +97,7 @@ const App: React.FC = () => {
     // Log
     if (currentUser?.role === 'admin') {
       addLog('ADMIN_ACTION', 'Sınav listesi güncellendi', currentUser.email);
+      logSystemActivity(currentUser.email, 'ADMIN_ACTION', 'Sınav listesi güncellendi.');
     }
   };
 
@@ -112,6 +113,7 @@ const App: React.FC = () => {
   const handleLogout = () => {
     if (currentUser) {
       addLog('LOGOUT', 'Kullanıcı çıkış yaptı', currentUser.email);
+      logSystemActivity(currentUser.email, 'LOGOUT', 'Kullanıcı çıkış yaptı.');
     }
     localStorage.removeItem('currentUser');
     setCurrentUser(null);
@@ -131,8 +133,9 @@ const App: React.FC = () => {
     
     // Log exam start
     if (currentUser) {
-       const examTitle = exams.find(e => e.id === id)?.title;
+       const examTitle = exams.find(e => e.id === id)?.title || 'Bilinmeyen Sınav';
        addLog('EXAM_START', `${examTitle} sınavına başlandı`, currentUser.email);
+       logSystemActivity(currentUser.email, 'EXAM_START', `Sınav Başladı: ${examTitle} (ID: ${id})`);
     }
   };
 
@@ -214,7 +217,10 @@ const App: React.FC = () => {
     history.push(historyItem);
     localStorage.setItem(key, JSON.stringify(history));
 
+    // Local Log
     addLog('EXAM_FINISH', `${exam.title} tamamlandı. Puan: ${result.totalScore}`, currentUser.email);
+    // Cloud System Log (Activity) - Detailed Exam log is handled by logExamToSupabase separately
+    logSystemActivity(currentUser.email, 'EXAM_FINISH', `Sınav Bitti: ${exam.title}. Puan: ${result.totalScore}`);
   };
 
   // Step 4: Perform the actual API call
@@ -227,9 +233,14 @@ const App: React.FC = () => {
     try {
       const result = await evaluateExam(currentExam, answers, key);
       
-      // Save result to history
+      // Save result to local history
       saveToHistory(currentExam, result);
       
+      // Save result to Supabase (Exam Specific Log)
+      if (currentUser) {
+        logExamToSupabase(currentUser, currentExam, result).catch(e => console.error("Cloud log failed", e));
+      }
+
       setAiResult(result);
       setView('result');
       window.scrollTo(0, 0);
@@ -250,6 +261,10 @@ const App: React.FC = () => {
       }
       
       setError(errorMsg);
+      // Hata durumunda da loglayalım
+      if (currentUser) {
+        logSystemActivity(currentUser.email, 'EXAM_ERROR', `Hata: ${errorMsg}`);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -261,6 +276,12 @@ const App: React.FC = () => {
     if (view === 'exam' && Object.keys(answers).length > 0) {
       if (!confirm("Sınavdan çıkarsanız cevaplarınız silinecektir. Emin misiniz?")) return;
     }
+    
+    // Eğer sınavdan erken çıkıyorsa logla
+    if (view === 'exam' && currentUser) {
+        logSystemActivity(currentUser.email, 'EXAM_ABORT', 'Kullanıcı sınavı bitirmeden ana sayfaya döndü.');
+    }
+
     setView('home');
     setSelectedExamId(null);
     setAnswers({});
@@ -284,7 +305,6 @@ const App: React.FC = () => {
 
     return (
       <div className="min-h-screen bg-background text-gray-800 font-sans pb-10">
-        <Analytics />
         
         {/* BLOCKING OVERLAY FOR LOADING STATE */}
         {isLoading && (

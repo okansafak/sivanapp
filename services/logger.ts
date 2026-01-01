@@ -1,3 +1,4 @@
+
 import { LogEntry, DeviceInfo } from '../types';
 
 const LOG_STORAGE_KEY = 'system_logs';
@@ -15,7 +16,7 @@ if (typeof window !== 'undefined') {
     .catch(err => console.warn("IP adresi alınamadı:", err));
 }
 
-const getBrowserInfo = (): DeviceInfo => {
+export const getBrowserInfo = (): DeviceInfo => {
   if (typeof window === 'undefined') {
     return {
       userAgent: 'Server Side',
