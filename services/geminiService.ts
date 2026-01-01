@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { Exam, StudentAnswers, AIExamResult, LESSON_LABELS } from '../types';
 
@@ -78,7 +79,21 @@ export const evaluateExam = async (exam: Exam, answers: StudentAnswers, userApiK
     const resultText = response.text;
     if (!resultText) throw new Error("Yapay zeka boş yanıt döndürdü.");
     
-    return JSON.parse(resultText) as AIExamResult;
+    const parsedResult = JSON.parse(resultText);
+
+    // Token Kullanım Verilerini Çek
+    const usageMetadata = response.usageMetadata;
+    const tokenUsage = usageMetadata ? {
+      promptTokens: usageMetadata.promptTokenCount || 0,
+      responseTokens: usageMetadata.candidatesTokenCount || 0,
+      totalTokens: usageMetadata.totalTokenCount || 0
+    } : undefined;
+
+    // Sonucu token verisiyle birleştirerek döndür
+    return {
+      ...parsedResult,
+      usage: tokenUsage
+    } as AIExamResult;
 
   } catch (error) {
     console.error("AI Evaluation Error:", error);

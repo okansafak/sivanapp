@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { User } from '../types';
-import { LogIn, School, GraduationCap, User as UserIcon, CheckCircle, MapPin, Building2 } from 'lucide-react';
+import { LogIn, School, GraduationCap, User as UserIcon, CheckCircle, MapPin, Building2, ShieldCheck } from 'lucide-react';
 import { addLog } from '../services/logger';
 import { logSystemActivity } from '../services/supabaseService';
 import { CITIES } from '../data/locations';
@@ -18,6 +18,9 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
   const [city, setCity] = useState<string>('');
   const [district, setDistrict] = useState<string>('');
   const [schoolName, setSchoolName] = useState<string>('');
+
+  // Onay Durumu
+  const [consent, setConsent] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
 
@@ -39,7 +42,9 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
           role: 'admin',
           city: 'Merkez',
           district: 'Yönetim',
-          schoolName: 'Admin Panel'
+          schoolName: 'Admin Panel',
+          consentGiven: true,
+          consentDate: new Date().toISOString()
         };
         localStorage.setItem('currentUser', JSON.stringify(adminUser));
         
@@ -50,7 +55,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
         return;
     }
 
-    // Validasyon
+    // Validasyonlar
     if (!name.trim()) {
       setError("Lütfen adınızı giriniz.");
       return;
@@ -68,19 +73,28 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
       return;
     }
 
+    // Onay Kontrolü
+    if (!consent) {
+      setError("Lütfen devam etmek için Aydınlatma Metni'ni ve veri işlemeyi onaylayınız.");
+      return;
+    }
+
     // Öğrenci Girişi
     const uniqueId = Date.now().toString().slice(-6);
     const generatedEmail = `ogrenci_${uniqueId}@okul.com`;
+    const now = new Date().toISOString();
 
     const newUser: User = {
       name: name.trim(),
       email: generatedEmail,
       grade: selectedGrade,
       role: 'student',
-      registeredAt: new Date().toISOString(),
+      registeredAt: now,
       schoolName: schoolName.trim(),
       city: city,
-      district: district
+      district: district,
+      consentGiven: true,
+      consentDate: now
     };
 
     // Kullanıcıyı kaydet (LocalStorage)
@@ -95,7 +109,6 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
     localStorage.setItem('currentUser', JSON.stringify(newUser));
     
     // LOGGING (Local & Cloud)
-    // Log mesajına konum bilgilerini ekle
     const logDetail = `${name} (${selectedGrade}. Sınıf) - ${city}/${district} - ${schoolName} sisteme giriş yaptı.`;
     
     addLog('LOGIN', logDetail, generatedEmail);
@@ -229,6 +242,28 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
               </div>
             </div>
 
+            {/* Rıza ve Onay Kutusu (Consent) */}
+            <div className="bg-blue-50/50 rounded-xl p-4 border border-blue-100">
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <div className="relative flex items-center mt-0.5">
+                  <input
+                    type="checkbox"
+                    checked={consent}
+                    onChange={(e) => setConsent(e.target.checked)}
+                    className="w-5 h-5 border-2 border-gray-300 rounded text-blue-600 focus:ring-blue-500 cursor-pointer transition-all checked:border-blue-600"
+                  />
+                </div>
+                <div className="text-sm">
+                  <span className="font-bold text-gray-700 group-hover:text-blue-700 transition-colors">
+                    Aydınlatma Metni ve Rıza Beyanı
+                  </span>
+                  <p className="text-gray-500 text-xs mt-1 leading-relaxed">
+                    Sınav sonuçlarımın yapay zeka tarafından değerlendirilmesini, deneyimimi iyileştirmek için çerezlerin kullanılmasını ve sınav verilerimin sistem geliştirme amacıyla anonim olarak loglanmasını kabul ediyorum.
+                  </p>
+                </div>
+              </label>
+            </div>
+
             {error && (
               <div className="bg-red-50 text-red-600 text-sm p-4 rounded-xl flex items-center justify-center font-bold animate-pulse border border-red-100 shadow-sm text-center">
                 {error}
@@ -237,16 +272,20 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
 
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-2 text-lg active:scale-95 transform mt-4 ring-offset-2 focus:ring-2 focus:ring-blue-600"
+              className={`w-full text-white font-bold py-4 rounded-2xl transition-all shadow-xl flex items-center justify-center gap-2 text-lg transform mt-2 ring-offset-2 focus:ring-2 
+                ${consent 
+                  ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-200 active:scale-95 focus:ring-blue-600' 
+                  : 'bg-gray-400 cursor-not-allowed shadow-gray-200'
+                }`}
             >
-              <LogIn className="w-5 h-5" />
+              {consent ? <LogIn className="w-5 h-5" /> : <ShieldCheck className="w-5 h-5" />}
               Sisteme Giriş Yap
             </button>
             
           </form>
           
           <p className="text-center text-xs text-gray-400 mt-6 font-medium">
-            KVKK kapsamında verileriniz sadece sınav deneyimi için tarayıcınızda saklanır.
+            Verileriniz KVKK kapsamında korunmaktadır.
           </p>
         </div>
       </div>

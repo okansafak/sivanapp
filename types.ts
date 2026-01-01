@@ -26,6 +26,8 @@ export interface User {
   city?: string;      // İl
   district?: string;  // İlçe
   schoolName?: string; // Okul Adı
+  consentGiven?: boolean; // KVKK Onayı
+  consentDate?: string;   // Onay Tarihi
 }
 
 export interface Question {
@@ -67,6 +69,11 @@ export interface AIExamResult {
   totalScore: number; // Out of 100
   generalFeedback: string;
   corrections: AICorrection[];
+  usage?: { // Token Kullanımı
+    promptTokens: number;
+    responseTokens: number;
+    totalTokens: number;
+  };
 }
 
 export interface ExamHistoryItem {

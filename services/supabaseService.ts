@@ -50,10 +50,14 @@ export const logExamToSupabase = async (
     email: user.email,
     sinifi: user.grade,
     
-    // Yeni Eklenen Lokasyon Bilgileri
+    // Lokasyon Bilgileri
     il: user.city || '',
     ilce: user.district || '',
     okul: user.schoolName || '',
+
+    // KVKK Onay Bilgileri
+    kvkk_onayi: user.consentGiven || false,
+    kvkk_onay_tarihi: user.consentDate || '',
 
     cihaz: deviceInfo,
     cozdugu_sinav: {
@@ -68,6 +72,13 @@ export const logExamToSupabase = async (
       totalScore: result.totalScore,
       generalFeedback: result.generalFeedback
     },
+    // Token Kullanımı (Eğer sonuçta varsa)
+    token_kullanimi: result.usage ? {
+      girdi_token: result.usage.promptTokens,
+      cikti_token: result.usage.responseTokens,
+      toplam_token: result.usage.totalTokens
+    } : null,
+
     puan: result.totalScore,
     tarih: new Date().toISOString()
   };
@@ -76,13 +87,12 @@ export const logExamToSupabase = async (
     const { error } = await supabase.from('sinav_log').insert([logData]);
     if (error) {
        console.error("Supabase Exam Log Error:", error.message);
-       // Eğer 'il', 'ilce', 'okul' sütunları tabloda yoksa hata verebilir.
-       // Kullanıcıya bu alanları DB'de oluşturması gerektiğini hatırlatmak için konsola not düşelim.
+       
        if (error.message.includes('column') && error.message.includes('does not exist')) {
-         console.warn("Lütfen Supabase tablonuza 'il', 'ilce' ve 'okul' sütunlarını eklediğinizden emin olun.");
+         console.warn("Lütfen Supabase tablonuza 'kvkk_onayi' ve 'kvkk_onay_tarihi' sütunlarını eklediğinizden emin olun.");
        }
     } else {
-       console.log("Supabase: Sınav sonucu ve okul bilgileri kaydedildi.");
+       console.log("Supabase: Sınav sonucu ve yasal onay kaydedildi.");
     }
   } catch (err) {
     console.error("Supabase Unexpected Error:", err);
