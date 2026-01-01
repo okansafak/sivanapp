@@ -1,9 +1,10 @@
 
 import React, { useState } from 'react';
 import { User } from '../types';
-import { LogIn, School, GraduationCap, User as UserIcon, CheckCircle } from 'lucide-react';
+import { LogIn, School, GraduationCap, User as UserIcon, CheckCircle, MapPin, Building2 } from 'lucide-react';
 import { addLog } from '../services/logger';
 import { logSystemActivity } from '../services/supabaseService';
+import { CITIES } from '../data/locations';
 
 interface AuthProps {
   onLogin: (user: User) => void;
@@ -12,7 +13,18 @@ interface AuthProps {
 const Auth: React.FC<AuthProps> = ({ onLogin }) => {
   const [name, setName] = useState('');
   const [selectedGrade, setSelectedGrade] = useState<number | null>(null);
+  
+  // Yeni Alanlar
+  const [city, setCity] = useState<string>('');
+  const [district, setDistrict] = useState<string>('');
+  const [schoolName, setSchoolName] = useState<string>('');
+
   const [error, setError] = useState<string | null>(null);
+
+  const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCity(e.target.value);
+    setDistrict(''); // Şehir değişince ilçeyi sıfırla
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,11 +36,13 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
           name: 'Sistem Yöneticisi',
           email: 'admin@portal.com',
           grade: 12,
-          role: 'admin'
+          role: 'admin',
+          city: 'Merkez',
+          district: 'Yönetim',
+          schoolName: 'Admin Panel'
         };
         localStorage.setItem('currentUser', JSON.stringify(adminUser));
         
-        // Log to Local & Cloud
         addLog('LOGIN', 'Admin yetkisiyle giriş yapıldı.', adminUser.email);
         logSystemActivity(adminUser.email, 'LOGIN', 'Admin girişi yapıldı.');
         
@@ -36,12 +50,25 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
         return;
     }
 
-    if (!name.trim() || !selectedGrade) {
-      setError("Lütfen adınızı girin ve sınıfınızı seçin.");
+    // Validasyon
+    if (!name.trim()) {
+      setError("Lütfen adınızı giriniz.");
+      return;
+    }
+    if (!selectedGrade) {
+      setError("Lütfen sınıfınızı seçiniz.");
+      return;
+    }
+    if (!city || !district) {
+      setError("Lütfen il ve ilçe seçimi yapınız.");
+      return;
+    }
+    if (!schoolName.trim()) {
+      setError("Lütfen okul adını giriniz.");
       return;
     }
 
-    // Basitleştirilmiş Öğrenci Girişi
+    // Öğrenci Girişi
     const uniqueId = Date.now().toString().slice(-6);
     const generatedEmail = `ogrenci_${uniqueId}@okul.com`;
 
@@ -51,15 +78,15 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
       grade: selectedGrade,
       role: 'student',
       registeredAt: new Date().toISOString(),
-      schoolName: 'Misafir Okulu',
-      city: 'Genel',
-      district: 'Genel'
+      schoolName: schoolName.trim(),
+      city: city,
+      district: district
     };
 
-    // Kullanıcıyı kaydet (LocalStorage - Basit Session)
+    // Kullanıcıyı kaydet (LocalStorage)
     localStorage.setItem(`user_${generatedEmail}`, JSON.stringify(newUser));
     
-    // Admin panelinde görünebilmesi için User Index'e ekleyelim
+    // User Index güncelleme
     const userListStr = localStorage.getItem('user_index');
     const userList: User[] = userListStr ? JSON.parse(userListStr) : [];
     userList.push(newUser);
@@ -68,8 +95,11 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
     localStorage.setItem('currentUser', JSON.stringify(newUser));
     
     // LOGGING (Local & Cloud)
-    addLog('LOGIN', `${name} (${selectedGrade}. Sınıf) sisteme giriş yaptı.`, generatedEmail);
-    logSystemActivity(generatedEmail, 'LOGIN', `Yeni oturum: ${name}, ${selectedGrade}. Sınıf`);
+    // Log mesajına konum bilgilerini ekle
+    const logDetail = `${name} (${selectedGrade}. Sınıf) - ${city}/${district} - ${schoolName} sisteme giriş yaptı.`;
+    
+    addLog('LOGIN', logDetail, generatedEmail);
+    logSystemActivity(generatedEmail, 'LOGIN', logDetail);
 
     onLogin(newUser);
   };
@@ -81,43 +111,93 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden animate-fade-in-up border border-gray-100">
+      <div className="w-full max-w-xl bg-white rounded-3xl shadow-2xl overflow-hidden animate-fade-in-up border border-gray-100">
         
         {/* Header */}
-        <div className="bg-slate-800 p-8 text-center text-white relative overflow-hidden">
+        <div className="bg-slate-800 p-6 md:p-8 text-center text-white relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full bg-blue-600/10 mix-blend-overlay"></div>
           <div className="bg-white/10 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 backdrop-blur-sm border border-white/20 shadow-inner">
              <UserIcon className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight mb-2 relative z-10">Hoş Geldiniz</h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-2 relative z-10">Öğrenci Girişi</h1>
           <p className="opacity-80 text-sm relative z-10">
-            Sınavlara başlamak için bilgilerinizi giriniz.
+            Sınavlara başlamak için bilgilerinizi eksiksiz doldurunuz.
           </p>
         </div>
 
         {/* Form Content */}
-        <div className="p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="p-6 md:p-8">
+          <form onSubmit={handleSubmit} className="space-y-5">
             
-            {/* Name Input */}
+            {/* Ad Soyad */}
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">Adınız Soyadınız</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-5 pr-4 py-4 border-2 border-gray-100 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none text-lg font-bold text-gray-800 bg-gray-50 focus:bg-white transition-all placeholder:font-normal"
-                  placeholder="Örn: Ali Yılmaz"
-                  autoFocus
-                />
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none font-bold text-gray-800 bg-gray-50 focus:bg-white transition-all placeholder:font-normal"
+                placeholder="Örn: Ali Yılmaz"
+                autoFocus
+              />
+            </div>
+
+            {/* Lokasyon (İl / İlçe) */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">İl</label>
+                <div className="relative">
+                  <select
+                    value={city}
+                    onChange={handleCityChange}
+                    className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none text-gray-800 bg-gray-50 focus:bg-white appearance-none cursor-pointer"
+                  >
+                    <option value="">Seçiniz</option>
+                    {Object.keys(CITIES).sort().map(cityName => (
+                      <option key={cityName} value={cityName}>{cityName}</option>
+                    ))}
+                  </select>
+                  <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">İlçe</label>
+                <div className="relative">
+                  <select
+                    value={district}
+                    onChange={(e) => setDistrict(e.target.value)}
+                    disabled={!city}
+                    className={`w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none text-gray-800 bg-gray-50 focus:bg-white appearance-none cursor-pointer ${!city && 'opacity-50 cursor-not-allowed'}`}
+                  >
+                    <option value="">{city ? 'Seçiniz' : 'Önce İl Seçin'}</option>
+                    {city && CITIES[city]?.map(dist => (
+                      <option key={dist} value={dist}>{dist}</option>
+                    ))}
+                  </select>
+                  <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                </div>
               </div>
             </div>
 
-            {/* Grade Selection */}
+            {/* Okul Adı */}
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">Okul Adı</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={schoolName}
+                  onChange={(e) => setSchoolName(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border-2 border-gray-100 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none font-medium text-gray-800 bg-gray-50 focus:bg-white transition-all placeholder:font-normal"
+                  placeholder="Örn: Cumhuriyet Ortaokulu"
+                />
+                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              </div>
+            </div>
+
+            {/* Sınıf Seçimi */}
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-3 ml-1">Sınıfınız</label>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {gradeOptions.map((level) => (
                   <div key={level.label}>
                     <div className="flex items-center gap-2 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wide px-1">
@@ -150,7 +230,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
             </div>
 
             {error && (
-              <div className="bg-red-50 text-red-600 text-sm p-4 rounded-xl flex items-center justify-center font-bold animate-pulse border border-red-100 shadow-sm">
+              <div className="bg-red-50 text-red-600 text-sm p-4 rounded-xl flex items-center justify-center font-bold animate-pulse border border-red-100 shadow-sm text-center">
                 {error}
               </div>
             )}
@@ -166,7 +246,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
           </form>
           
           <p className="text-center text-xs text-gray-400 mt-6 font-medium">
-            Giriş yaparak kullanım koşullarını kabul etmiş sayılırsınız.
+            KVKK kapsamında verileriniz sadece sınav deneyimi için tarayıcınızda saklanır.
           </p>
         </div>
       </div>

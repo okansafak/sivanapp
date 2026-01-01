@@ -44,10 +44,17 @@ export const logExamToSupabase = async (
 
   const deviceInfo = getBrowserInfo();
 
+  // Supabase'e gönderilecek veri paketi
   const logData = {
     adi: user.name,
     email: user.email,
     sinifi: user.grade,
+    
+    // Yeni Eklenen Lokasyon Bilgileri
+    il: user.city || '',
+    ilce: user.district || '',
+    okul: user.schoolName || '',
+
     cihaz: deviceInfo,
     cozdugu_sinav: {
       id: exam.id,
@@ -67,13 +74,22 @@ export const logExamToSupabase = async (
 
   try {
     const { error } = await supabase.from('sinav_log').insert([logData]);
-    if (error) console.error("Supabase Exam Log Error:", error.message);
+    if (error) {
+       console.error("Supabase Exam Log Error:", error.message);
+       // Eğer 'il', 'ilce', 'okul' sütunları tabloda yoksa hata verebilir.
+       // Kullanıcıya bu alanları DB'de oluşturması gerektiğini hatırlatmak için konsola not düşelim.
+       if (error.message.includes('column') && error.message.includes('does not exist')) {
+         console.warn("Lütfen Supabase tablonuza 'il', 'ilce' ve 'okul' sütunlarını eklediğinizden emin olun.");
+       }
+    } else {
+       console.log("Supabase: Sınav sonucu ve okul bilgileri kaydedildi.");
+    }
   } catch (err) {
     console.error("Supabase Unexpected Error:", err);
   }
 };
 
-// --- GENEL SİSTEM AKTİVİTESİ LOGLAMA (YENİ) ---
+// --- GENEL SİSTEM AKTİVİTESİ LOGLAMA ---
 export const logSystemActivity = async (
   email: string,
   action: string, // LOGIN, LOGOUT, EXAM_START, PAGE_VIEW
@@ -96,7 +112,6 @@ export const logSystemActivity = async (
     if (error) {
        console.error("Supabase Activity Log Error:", error.message);
     } else {
-       // Geliştirme aşamasında takip için
        console.log(`Supabase Log Gönderildi: [${action}]`);
     }
   } catch (err) {
