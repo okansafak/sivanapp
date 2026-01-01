@@ -1,4 +1,32 @@
-export type LessonType = 'turkish' | 'arabic' | 'math' | 'science' | 'social' | 'english' | 'religious';
+
+export type LessonType = 
+  | 'turkish' 
+  | 'arabic' 
+  | 'math' 
+  | 'science' 
+  | 'social' 
+  | 'english' 
+  | 'religious'
+  | 'literature'  // Edebiyat
+  | 'physics'     // Fizik
+  | 'chemistry'   // Kimya
+  | 'biology'     // Biyoloji
+  | 'history'     // Tarih
+  | 'geography'   // Coğrafya
+  | 'philosophy'; // Felsefe
+
+export interface User {
+  name: string;
+  email: string;
+  grade: number; // 5-12
+  role: 'student' | 'admin'; // Rol eklendi
+  registeredAt?: string;
+  avatar?: string; // Base64 image string (<10kb optimized)
+  password?: string; // For profile update simulation
+  city?: string;      // İl
+  district?: string;  // İlçe
+  schoolName?: string; // Okul Adı
+}
 
 export interface Question {
   id: number;
@@ -12,6 +40,7 @@ export interface Question {
 
 export interface Exam {
   id: number;
+  grade: number;      // Sınıf Seviyesi (5-12)
   lesson: LessonType; // Ders
   term: 1 | 2;        // Dönem
   examNumber: 1 | 2;  // Yazılı Numarası
@@ -19,6 +48,7 @@ export interface Exam {
   theme: string;      // Alt Başlık (Örn: Doğa Teması)
   description: string;
   questions: Question[];
+  isActive?: boolean; // Admin tarafından aktif/pasif yapabilmek için
 }
 
 export interface StudentAnswers {
@@ -39,6 +69,42 @@ export interface AIExamResult {
   corrections: AICorrection[];
 }
 
+export interface ExamHistoryItem {
+  id: string; // unique ID for history record
+  examId: number;
+  examTitle: string;
+  lesson: LessonType;
+  score: number;
+  date: string; // ISO String
+}
+
+export interface ScheduleItem {
+  id: string;
+  lesson: LessonType;
+  title: string; // "Matematik 1. Yazılı"
+  date: string; // YYYY-MM-DD
+}
+
+// Cihaz ve Tarayıcı Bilgileri
+export interface DeviceInfo {
+  userAgent: string;
+  platform: string;
+  language: string;
+  screenResolution: string;
+  connectionType?: string; // 4g, wifi vb. (destekleniyorsa)
+  ipAddress?: string; // Client-side fetch ile alınacak
+}
+
+// Sistem Logları için Güncellenmiş Interface
+export interface LogEntry {
+  id: string;
+  action: string; // 'LOGIN', 'REGISTER', 'EXAM_START', 'EXAM_FINISH', 'ADMIN_ACTION', 'LOGIN_FAILED'
+  details: string;
+  userEmail: string;
+  timestamp: string;
+  deviceInfo?: DeviceInfo; // Yeni alan
+}
+
 export const LESSON_LABELS: Record<LessonType, string> = {
   turkish: 'Türkçe',
   math: 'Matematik',
@@ -46,5 +112,12 @@ export const LESSON_LABELS: Record<LessonType, string> = {
   social: 'Sosyal Bilgiler',
   english: 'İngilizce',
   religious: 'Din Kültürü',
-  arabic: 'Arapça'
+  arabic: 'Arapça',
+  literature: 'Türk Dili ve Edebiyatı',
+  physics: 'Fizik',
+  chemistry: 'Kimya',
+  biology: 'Biyoloji',
+  history: 'Tarih',
+  geography: 'Coğrafya',
+  philosophy: 'Felsefe'
 };

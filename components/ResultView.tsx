@@ -1,6 +1,6 @@
 import React from 'react';
 import { AIExamResult, Exam, StudentAnswers } from '../types';
-import { CheckCircle, XCircle, Home, Printer } from 'lucide-react';
+import { CheckCircle, XCircle, Home, Printer, Award } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 interface ResultViewProps {
@@ -20,65 +20,70 @@ const ResultView: React.FC<ResultViewProps> = ({ result, exam, answers, onHome }
   }));
 
   return (
-    <div className="max-w-4xl mx-auto pb-10 px-4 md:px-0">
-      {/* Actions Header */}
-      <div className="flex flex-col-reverse sm:flex-row justify-between items-center gap-4 mb-6 no-print mt-4 md:mt-0">
-        <button onClick={onHome} className="w-full sm:w-auto flex justify-center items-center text-primary hover:text-accent font-bold py-2 bg-gray-100 sm:bg-transparent rounded-lg">
-          <Home className="w-5 h-5 mr-2" /> Ana Sayfa
+    <div className="max-w-3xl mx-auto pb-20 px-4 md:px-0 animate-fade-in">
+      
+      {/* Mobile-friendly Action Header */}
+      <div className="flex gap-2 mb-4 mt-4 no-print sticky top-0 bg-background/90 backdrop-blur z-20 py-2">
+        <button onClick={onHome} className="flex-1 flex justify-center items-center text-primary font-bold py-3 bg-white border border-gray-200 shadow-sm rounded-xl active:scale-95 transition-transform text-sm">
+          <Home className="w-4 h-4 mr-2" /> Ana Menü
         </button>
-        <button onClick={() => window.print()} className="w-full sm:w-auto flex justify-center items-center bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 shadow-md">
-          <Printer className="w-5 h-5 mr-2" /> Raporu Yazdır
+        <button onClick={() => window.print()} className="flex-none flex justify-center items-center bg-gray-800 text-white p-3 rounded-xl shadow-sm active:scale-95 transition-transform">
+          <Printer className="w-5 h-5" />
         </button>
       </div>
 
-      {/* Summary Card */}
-      <div className="bg-white rounded-xl shadow-xl overflow-hidden mb-8 border border-gray-200 print:shadow-none print:border-2 print:border-black">
-        <div className="bg-primary text-white p-4 md:p-6 text-center print:bg-white print:text-black print:border-b-2 print:border-black">
-          <h2 className="text-xl md:text-2xl font-bold mb-1">Sınav Sonuç Raporu</h2>
-          <p className="opacity-90 text-sm md:text-base">{exam.title}: {exam.theme}</p>
+      {/* Main Report Card */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6 print:shadow-none print:border-2 print:border-black">
+        {/* Header */}
+        <div className="bg-slate-800 text-white p-6 text-center print:bg-white print:text-black print:border-b">
+          <div className="inline-flex p-2 bg-white/10 rounded-full mb-3">
+             <Award className="w-8 h-8 text-yellow-400" />
+          </div>
+          <h2 className="text-xl font-bold mb-1">Sınav Sonucu</h2>
+          <p className="opacity-80 text-sm">{exam.title}</p>
         </div>
         
         <div className="p-4 md:p-8">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 mb-8">
-            {/* Score Circle */}
-            <div className="relative w-32 h-32 md:w-40 md:h-40 flex items-center justify-center rounded-full border-8 border-gray-100 shadow-inner flex-shrink-0">
+          <div className="flex flex-col items-center gap-6 mb-8">
+            {/* Score */}
+            <div className="relative w-36 h-36 flex items-center justify-center rounded-full border-[6px] border-gray-50 shadow-lg">
                <div className="text-center">
-                 <span className={`text-4xl md:text-5xl font-extrabold ${result.totalScore >= 50 ? 'text-green-600' : 'text-red-500'}`}>
+                 <span className={`text-5xl font-extrabold tracking-tighter ${result.totalScore >= 50 ? 'text-green-600' : 'text-red-500'}`}>
                    {result.totalScore}
                  </span>
-                 <span className="block text-gray-400 text-xs md:text-sm font-bold">/ 100</span>
+                 <span className="block text-gray-400 text-xs font-bold uppercase mt-1">Puan</span>
                </div>
-               <svg className="absolute w-full h-full -rotate-90" viewBox="0 0 100 100">
+               <svg className="absolute w-full h-full -rotate-90 top-0 left-0 pointer-events-none" viewBox="0 0 100 100" style={{ transform: 'scale(1.1)' }}>
                  <circle 
                    className={`${result.totalScore >= 50 ? 'text-green-500' : 'text-red-500'} stroke-current`} 
-                   strokeWidth="8"
+                   strokeWidth="6"
                    fill="transparent"
-                   r="46"
+                   r="45"
                    cx="50" 
                    cy="50"
-                   strokeDasharray={`${(result.totalScore / 100) * 289} 289`}
+                   strokeDasharray={`${(result.totalScore / 100) * 283} 283`}
                    strokeLinecap="round"
                  />
                </svg>
             </div>
 
             {/* General Feedback */}
-            <div className="w-full bg-blue-50 p-4 md:p-6 rounded-lg border-l-4 border-blue-500 print:bg-white print:border">
-              <h3 className="text-base md:text-lg font-bold text-blue-800 mb-2">Öğretmen Görüşü:</h3>
-              <p className="text-gray-700 italic leading-relaxed text-sm md:text-base">{result.generalFeedback}</p>
+            <div className="w-full bg-blue-50/80 p-5 rounded-xl border border-blue-100 print:bg-white print:border">
+              <h3 className="text-sm font-bold text-blue-800 mb-2 uppercase tracking-wide">Öğretmen Değerlendirmesi</h3>
+              <p className="text-gray-700 italic text-sm leading-relaxed">"{result.generalFeedback}"</p>
             </div>
           </div>
 
-          {/* Chart */}
-          <div className="h-48 md:h-64 w-full mb-8 no-print">
-            <h4 className="text-center font-bold text-gray-500 mb-4 text-sm md:text-base">Soru Bazlı Başarı Analizi</h4>
+          {/* Chart - Hidden on very small screens or print */}
+          <div className="h-48 w-full mb-8 no-print hidden sm:block">
+            <h4 className="text-center font-bold text-gray-400 mb-4 text-xs uppercase tracking-wider">Soru Bazlı Başarı</h4>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="name" tick={{fontSize: 12}} />
-                <YAxis domain={[0, 100]} tick={{fontSize: 12}} />
-                <Tooltip />
-                <Bar dataKey="score" radius={[4, 4, 0, 0]}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                <XAxis dataKey="name" tick={{fontSize: 10}} axisLine={false} tickLine={false} />
+                <YAxis domain={[0, 100]} hide />
+                <Tooltip cursor={{fill: 'transparent'}} />
+                <Bar dataKey="score" radius={[4, 4, 4, 4]}>
                   {chartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.score > 50 ? '#22c55e' : '#ef4444'} />
                   ))}
@@ -87,41 +92,43 @@ const ResultView: React.FC<ResultViewProps> = ({ result, exam, answers, onHome }
             </ResponsiveContainer>
           </div>
 
-          {/* Detailed Breakdown */}
-          <div className="space-y-4 md:space-y-6">
-            <h3 className="text-lg md:text-xl font-bold border-b pb-2">Detaylı Değerlendirme</h3>
+          {/* Breakdown */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold text-gray-800 border-b pb-2 mb-4">Soru Analizi</h3>
             {result.corrections.map((corr, idx) => {
               const question = exam.questions.find(q => q.id === corr.questionId);
-              const studentAnswer = answers[corr.questionId] || "(Boş Bırakıldı)";
+              const studentAnswer = answers[corr.questionId] || "-";
               
               return (
-                <div key={idx} className={`p-3 md:p-4 rounded-lg border ${corr.isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} print:bg-white print:border-gray-300`}>
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex items-center">
+                <div key={idx} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                  {/* Card Header */}
+                  <div className={`px-4 py-3 flex justify-between items-center border-b ${corr.isCorrect ? 'bg-green-50/50 border-green-100' : 'bg-red-50/50 border-red-100'}`}>
+                    <div className="flex items-center gap-2">
                        {corr.isCorrect ? 
-                         <CheckCircle className="text-green-600 w-5 h-5 md:w-6 md:h-6 mr-2" /> : 
-                         <XCircle className="text-red-500 w-5 h-5 md:w-6 md:h-6 mr-2" />
+                         <CheckCircle className="text-green-600 w-5 h-5" /> : 
+                         <XCircle className="text-red-500 w-5 h-5" />
                        }
-                       <span className="font-bold text-gray-800 text-sm md:text-base">Soru {idx + 1}</span>
+                       <span className="font-bold text-gray-700 text-sm">Soru {idx + 1}</span>
                     </div>
-                    <span className={`font-bold px-2 py-1 md:px-3 rounded-full text-xs md:text-sm ${corr.isCorrect ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
+                    <span className={`font-bold px-2.5 py-0.5 rounded-md text-xs ${corr.isCorrect ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                       {corr.score} Puan
                     </span>
                   </div>
                   
-                  {question && <p className="text-xs md:text-sm text-gray-500 mb-2 font-medium">{question.title}</p>}
-                  
-                  {/* Student Answer Section */}
-                  <div className="mb-3 bg-white/60 p-2 rounded border border-gray-200">
-                    <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Senin Cevabın:</span>
-                    <p className="text-sm md:text-base text-gray-800 italic font-medium break-words">
-                      {studentAnswer}
-                    </p>
-                  </div>
+                  <div className="p-4">
+                    {question && <p className="text-sm font-semibold text-gray-800 mb-3">{question.questionText}</p>}
+                    
+                    <div className="space-y-3">
+                      <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Cevabın</span>
+                        <p className="text-sm text-gray-700 break-words font-medium">{studentAnswer}</p>
+                      </div>
 
-                  <div className="mt-2">
-                    <span className="font-bold text-xs md:text-sm text-gray-700 block mb-1">Öğretmen Değerlendirmesi:</span>
-                    <p className="text-gray-800 text-sm md:text-base">{corr.feedback}</p>
+                      <div className="pl-1">
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Açıklama</span>
+                        <p className="text-sm text-gray-600 leading-relaxed">{corr.feedback}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               );

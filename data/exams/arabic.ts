@@ -4,6 +4,7 @@ export const ARABIC_EXAMS: Exam[] = [
   // 1. DÖNEM 1. YAZILI
   {
     id: 201,
+    grade: 5,
     lesson: 'arabic',
     term: 1,
     examNumber: 1,
@@ -22,6 +23,7 @@ export const ARABIC_EXAMS: Exam[] = [
   // 1. DÖNEM 2. YAZILI - SENARYO 1
   {
     id: 202,
+    grade: 5,
     lesson: 'arabic',
     term: 1,
     examNumber: 2,
@@ -76,6 +78,7 @@ export const ARABIC_EXAMS: Exam[] = [
   // 1. DÖNEM 2. YAZILI - SENARYO 2
   {
     id: 203,
+    grade: 5,
     lesson: 'arabic',
     term: 1,
     examNumber: 2,
@@ -129,6 +132,7 @@ export const ARABIC_EXAMS: Exam[] = [
   // 1. DÖNEM 2. YAZILI - SENARYO 3
   {
     id: 204,
+    grade: 5,
     lesson: 'arabic',
     term: 1,
     examNumber: 2,

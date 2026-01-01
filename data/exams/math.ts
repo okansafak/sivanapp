@@ -3,6 +3,7 @@ import { Exam } from '../../types';
 export const MATH_EXAMS: Exam[] = [
   {
     id: 301,
+    grade: 5,
     lesson: 'math',
     term: 1,
     examNumber: 1,
@@ -19,6 +20,7 @@ export const MATH_EXAMS: Exam[] = [
   },
   {
     id: 302,
+    grade: 5,
     lesson: 'math',
     term: 1,
     examNumber: 2,

@@ -31,6 +31,7 @@ const createQuestions = (theme: string, poem: string, q2Text: string, storyConte
 export const TURKISH_EXAMS: Exam[] = [
   {
     id: 101,
+    grade: 5,
     lesson: 'turkish',
     term: 1,
     examNumber: 2,
@@ -52,6 +53,7 @@ export const TURKISH_EXAMS: Exam[] = [
   },
   {
     id: 102,
+    grade: 5,
     lesson: 'turkish',
     term: 1,
     examNumber: 2,
@@ -73,6 +75,7 @@ export const TURKISH_EXAMS: Exam[] = [
   },
   {
     id: 107,
+    grade: 5,
     lesson: 'turkish',
     term: 1,
     examNumber: 2,
