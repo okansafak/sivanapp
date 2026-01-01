@@ -248,5 +248,137 @@ export const SOCIAL_EXAMS: Exam[] = [
         placeholder: "İzlenecek yol ve kurum..."
       }
     ]
+  },
+  {
+    id: 404,
+    grade: 5,
+    lesson: 'social',
+    term: 1,
+    examNumber: 2,
+    title: "SINAV D (İstanbul & Değişim)",
+    theme: "Kentsel Dönüşüm ve Deprem",
+    description: "İstanbul'daki kentsel değişim, sosyal yaşam ve deprem farkındalığı üzerine kurgulanmış özel senaryo.",
+    questions: [
+      {
+        id: 1,
+        code: "SB.5.2.2",
+        title: "Değişen İstanbul (Beşeri Unsurlar)",
+        context: "Benim çocukluğumda İstanbul’un mahallelerinde iki-üç katlı, bahçeli evler vardı. Sokaklarımız dardı ama içlerinde özgürce koştururduk. Şimdilerde ise bu mahallelerin yerini devasa gökdelenler, yüksek katlı rezidanslar ve yüksek duvarlarla çevrili güvenlikli siteler aldı. Eskiden mahallemizdeki boş arsalar bizim maç sahamızdı. Şimdi ise o arsaların yerinde alışveriş merkezleri veya kapalı otoparklar yükseliyor. Çocuklar artık sokak aralarında değil, sitelerin içindeki plastik parklarda ya da spor salonlarında vakit geçiriyor.",
+        questionText: "Metne göre İstanbul'da değişen beşerî çevre unsurlarından (insan yapımı yapılar) hangileri yer almaktadır?",
+        type: 'text',
+        placeholder: "Örn: Gökdelenler, AVM'ler..."
+      },
+      {
+        id: 2,
+        code: "SB.5.2.2",
+        title: "Değişimin Neden ve Sonuçları",
+        questionText: "Metinde anlatılan kentsel değişimin nedenlerine ve sonuçlarına birer örnek veriniz.",
+        type: 'textarea',
+        placeholder: "Nedenleri: ... \nSonuçları: ..."
+      },
+      {
+        id: 3,
+        code: "SB.5.2.3",
+        title: "Deprem Önlemleri",
+        context: "\"Deprem değil, ihmal öldürür.\"",
+        questionText: "İstanbul'da beklenen bir depremin yol açacağı zararı azaltmaya yönelik, bireysel veya kurumsal düzeyde alınabilecek önlemlerden birini yazınız.",
+        type: 'textarea',
+        placeholder: "Örn: Binaların güçlendirilmesi, deprem çantası..."
+      },
+      {
+        id: 4,
+        code: "SB.5.2.3",
+        title: "Farkındalık Sloganı",
+        questionText: "Belirttiğiniz bu önlemi göz önünde bulundurarak, İstanbulluların deprem bilincini ve toplumsal farkındalığını artırmaya yönelik bir slogan yazınız.",
+        type: 'text',
+        placeholder: "Sloganınız..."
+      }
+    ]
+  },
+  {
+    id: 405,
+    grade: 5,
+    lesson: 'social',
+    term: 1,
+    examNumber: 2,
+    title: "SINAV E (Karma Senaryo)",
+    theme: "Afetler, Çevre ve Bağımsızlık",
+    description: "Güncel deprem senaryoları, çevre sorunları ve milli bağımsızlık sembollerini içeren kapsamlı sınav.",
+    questions: [
+      {
+        id: 1,
+        code: "SB.5.1.3",
+        title: "Dayanışma ve Birlik",
+        context: "6 Şubat 2023 Kahramanmaraş depreminden sonra tüm Türkiye’den insanların bölgeye yardım göndermesi, AFAD ve Türk Kızılay gibi kurumların yanı sıra halkın da “seferberlik” ilan etmesi toplumsal birlikteliğimizin en büyük göstergesidir.",
+        questionText: "Bu durum toplumsal birlikteliğimiz açısından ne ifade eder? “Acılar paylaşıldıkça azalır.” sözünü bu durumla ilişkilendirerek açıklayınız.",
+        type: 'textarea',
+        placeholder: "Düşünceleriniz..."
+      },
+      {
+        id: 2,
+        code: "SB.5.3.3",
+        title: "Göreceli Konum",
+        context: "\"Göreceli konum zamanla değişebilir.\"",
+        questionText: "Bu ifadeden ne anlıyorsunuz? Yaşadığınız çevreden hayalî bir örnekle bu durumu anlatınız.",
+        type: 'textarea',
+        placeholder: "Anladığım: ... \nÖrnek: ..."
+      },
+      {
+        id: 3,
+        code: "SB.5.2.2",
+        title: "Beşerî Coğrafya (Nüfus)",
+        questionText: "Bir bölgeye büyük bir fabrika kurulduğunda o şehirde 'Nüfus' ve 'Konut' alanlarında ne gibi değişiklikler gözlemlenir?",
+        type: 'textarea',
+        placeholder: "Nüfus: ... \nKonut: ..."
+      },
+      {
+        id: 4,
+        code: "SB.5.2.2",
+        title: "Çevresel Değişimin Sonuçları",
+        questionText: "Doğal ve beşerî çevrede meydana gelen değişimler her zaman olumlu sonuçlar ortaya çıkarmaz. Değişimin olumsuz sonuçlarının neler olabileceğini yazınız.",
+        type: 'textarea',
+        placeholder: "Olumsuz sonuçlar..."
+      },
+      {
+        id: 5,
+        code: "SB.5.2.3",
+        title: "Afet Bilinci (Sel)",
+        questionText: "Sadece aşırı yağış sel nedeni değildir. İnsanların yaptığı hangi yanlış uygulamalar sel riskini ve selin zararını artırır? Yazınız.",
+        type: 'textarea',
+        placeholder: "Yanlış uygulamalar..."
+      },
+      {
+        id: 6,
+        code: "SB.5.2.3",
+        title: "Deprem Hazırlığı",
+        questionText: "Deprem anında güvenliğimizi sağlamak için deprem olmadan önce ev içinde yapmamız gereken hazırlıklardan iki tanesini yazınız.",
+        type: 'textarea',
+        placeholder: "1. ... \n2. ..."
+      },
+      {
+        id: 7,
+        code: "SB.5.1.2",
+        title: "Bağımsızlık Sembolleri",
+        questionText: "Bağımsızlığımızın ve egemenliğimizin sembollerinden üç tanesini yazınız.",
+        type: 'textarea',
+        placeholder: "1. ...\n2. ...\n3. ..."
+      },
+      {
+        id: 8,
+        code: "SB.5.2.4",
+        title: "Komşularımız (Nahçıvan)",
+        questionText: "Nahçıvan Özerk Cumhuriyeti’nin ülkemiz için önemi nedir ve hangi özelliği ile diğer komşularımızdan ayrılmaktadır? Yazınız.",
+        type: 'textarea',
+        placeholder: "Önemi: ...\nÖzelliği: ..."
+      },
+      {
+        id: 9,
+        code: "SB.5.3.1",
+        title: "Ortak Miras (Pamukkale)",
+        questionText: "Denizli’de bulunan “Pamukkale ve Hierapolis” neden hem doğal hem de kültürel miras olarak kabul edilmektedir? Yazınız.",
+        type: 'textarea',
+        placeholder: "Nedeni..."
+      }
+    ]
   }
 ];

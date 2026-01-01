@@ -11,6 +11,7 @@ import AdminDashboard from './components/AdminDashboard';
 import { ALL_EXAMS } from './data/exams/index'; 
 import { evaluateExam } from './services/geminiService';
 import { addLog } from './services/logger';
+import { Analytics } from '@vercel/analytics/react';
 import { initializeDemoUsers } from './data/demoUsers';
 import { Exam, StudentAnswers, AIExamResult, User, ExamHistoryItem } from './types';
 import { Sparkles, Brain, Loader2 } from 'lucide-react';
@@ -283,6 +284,7 @@ const App: React.FC = () => {
 
     return (
       <div className="min-h-screen bg-background text-gray-800 font-sans pb-10">
+        <Analytics />
         
         {/* BLOCKING OVERLAY FOR LOADING STATE */}
         {isLoading && (

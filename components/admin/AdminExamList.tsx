@@ -112,12 +112,14 @@ const AdminExamList: React.FC<AdminExamListProps> = ({
     reader.onload = (e) => {
       try {
         const content = e.target?.result as string;
-        const importedExams = JSON.parse(content);
+        const parsed: any = JSON.parse(content);
         
-        if (!Array.isArray(importedExams)) {
+        if (!Array.isArray(parsed)) {
           alert("Hata: Yüklenen dosya geçerli bir sınav listesi formatında değil.");
           return;
         }
+
+        const importedExams = parsed as Exam[];
 
         if (confirm(`${importedExams.length} adet sınav yüklenecek. Onaylıyor musunuz?`)) {
           const currentIds = new Set(exams.map(e => e.id));
